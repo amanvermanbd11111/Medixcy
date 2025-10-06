@@ -136,7 +136,7 @@ class OtpLoginScreen extends StatelessWidget {
 
         OtpTextField(
           numberOfFields: 6,
-          fieldWidth: 50,
+          fieldWidth: 45,
           borderColor: Colors.black,
           focusedBorderColor: const Color(0xFF4FC3B7),
           showFieldAsBox: true,
