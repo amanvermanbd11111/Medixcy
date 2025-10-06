@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "760278758699",
+    "firebase_url": "https://medixcyapp-23f95-default-rtdb.firebaseio.com",
+    "project_id": "medixcyapp-23f95",
+    "storage_bucket": "medixcyapp-23f95.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:760278758699:android:b152b6555aad6ea6b3016e",
+        "android_client_info": {
+          "package_name": "com.medixcy.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCAAjeLumk9r0NNkgAAI2qjlG2cBtC1OvE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

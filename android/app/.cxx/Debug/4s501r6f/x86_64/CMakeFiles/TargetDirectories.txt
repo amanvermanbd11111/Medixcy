@@ -1,0 +1,2 @@
+/Users/user/Downloads/vivek/product app/doctor finder/old code only pharmacy/doctorfinder_app/android/app/.cxx/Debug/4s501r6f/x86_64/CMakeFiles/rebuild_cache.dir
+/Users/user/Downloads/vivek/product app/doctor finder/old code only pharmacy/doctorfinder_app/android/app/.cxx/Debug/4s501r6f/x86_64/CMakeFiles/edit_cache.dir

@@ -1,0 +1,2 @@
+/Users/user/Desktop/update code/doctorfinder_app/android/app/.cxx/Debug/1b1w2l15/armeabi-v7a/CMakeFiles/rebuild_cache.dir
+/Users/user/Desktop/update code/doctorfinder_app/android/app/.cxx/Debug/1b1w2l15/armeabi-v7a/CMakeFiles/edit_cache.dir
