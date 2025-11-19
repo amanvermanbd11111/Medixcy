@@ -55,7 +55,7 @@ class OtpLoginScreen extends StatelessWidget {
         ),
         const SizedBox(height: 30),
         const Text(
-          'Login',
+          'Get Started',
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 10),
@@ -136,7 +136,7 @@ class OtpLoginScreen extends StatelessWidget {
 
         OtpTextField(
           numberOfFields: 6,
-          fieldWidth: 45,
+          fieldWidth: Get.width*.11,
           borderColor: Colors.black,
           focusedBorderColor: const Color(0xFF4FC3B7),
           showFieldAsBox: true,
@@ -148,7 +148,7 @@ class OtpLoginScreen extends StatelessWidget {
         SizedBox(
           height: 50,
           child: ElevatedButton(
-            onPressed: controller.verifyOtp,
+            onPressed: () => controller.verifyOtp(1),
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF4FC3B7),
               shape: RoundedRectangleBorder(
@@ -163,13 +163,13 @@ class OtpLoginScreen extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 15),
-        Align(
-          alignment: Alignment.centerRight,
-          child: TextButton(
-            onPressed: controller.resendOtp,
-            child: const Text('Resend OTP', style: TextStyle(color: Colors.black)),
-          ),
-        ),
+        // Align(
+        //   alignment: Alignment.centerRight,
+        //   child: TextButton(
+        //     onPressed: controller.resendOtp,
+        //     child: const Text('Resend OTP', style: TextStyle(color: Colors.black)),
+        //   ),
+        // ),
       ],
     );
   }

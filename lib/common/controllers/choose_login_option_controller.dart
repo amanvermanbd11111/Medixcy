@@ -5,17 +5,22 @@ class LoginOptionsController extends GetxController {
     LoginOptionData(
       title: 'Login as patient',
       imagePath: AppImages.loginOption1,
-      onTap: () => Get.to(OtpLoginScreen()),
-    ),
+      onTap: () async{
+  await Get.toNamed(Routes.loginWithOtpScreen,
+  arguments: {
+  "isBack": false,
+  });
+  }
+  ),
     LoginOptionData(
       title: 'Login as doctor',
       imagePath: AppImages.loginOption2,
-      onTap: () => Get.to(OtpLoginScreen()),
-    ),
+      onTap: () {}),
+
     LoginOptionData(
       title: 'Login as student',
       imagePath: AppImages.loginOption3,
-      onTap: () => Get.to(OtpLoginScreen()),
+      onTap: () => null,
     ),
   ].obs;
 }

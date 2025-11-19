@@ -11,6 +11,19 @@ class PharmacyOrderScreen extends GetView<UserPastAppointmentsController> {
   Widget build(BuildContext context){
     return Scaffold(
       backgroundColor: AppColors.LIGHT_GREY_SCREEN_BACKGROUND,
+      ///new code
+      appBar: AppBar(
+        elevation: 0,
+        flexibleSpace: CustomAppBar(
+          title: 'My Orders'.tr,
+          onPressed: () {
+            Get.back();
+          },
+          isBackArrow: true,
+        ),
+        leading: Container(),
+      ),
+      ///
       body:
       Container(
         margin: const EdgeInsets.fromLTRB(16, 0, 16, 0),

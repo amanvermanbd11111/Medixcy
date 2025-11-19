@@ -5,8 +5,8 @@ import 'package:videocalling_medical/patient/model/uhome_model.dart';
 int PHONE_LENGTH = 10;
 int PASS_LENGTH = 6;
 
-String CURRENCY = "\$";
-String CURRENCY_CODE = "USD";
+String CURRENCY = "\₹";
+String CURRENCY_CODE = "INR";
 
 const String ServerToken =
     'AAAAPwd2Odk:APA91bHOAgCVVag8SlmMQLA_xX1mONxeNKcEK0TYOAxHfAp3CvbJ_tewOoIh7MSPK0bMy9H8A9cCJqQYZH71W_SC0nZlfR57i2lDuIGKPtS3HcUB17GpbS1QDrz-08XAXkzjqyClSgtM';

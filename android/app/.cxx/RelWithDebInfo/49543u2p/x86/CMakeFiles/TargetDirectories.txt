@@ -1,0 +1,2 @@
+/Users/amanverma/Documents/Development/flutter projects/Medixcy/android/app/.cxx/RelWithDebInfo/49543u2p/x86/CMakeFiles/edit_cache.dir
+/Users/amanverma/Documents/Development/flutter projects/Medixcy/android/app/.cxx/RelWithDebInfo/49543u2p/x86/CMakeFiles/rebuild_cache.dir

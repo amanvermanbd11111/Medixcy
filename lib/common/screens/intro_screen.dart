@@ -205,13 +205,13 @@ class IntroductionScreenPage extends StatelessWidget {
   }
   RichText buildRichTextDisc(String text, List<String> highlightWords) {
     final defaultStyle = const TextStyle(
-      fontSize: 22,
+      fontSize: 20,
       height: 1.4,
       color: Colors.black,
     );
 
     final highlightStyle = const TextStyle(
-      fontSize: 22,
+      fontSize: 20,
       height: 1.4,
       fontWeight: FontWeight.bold,
       color: Colors.white, // your highlight color

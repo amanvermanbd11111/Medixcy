@@ -43,7 +43,7 @@ class Words extends Translations {
       'cancel': 'Cancel',
       'btn_submit': 'Submit',
       'logout_title': 'Logout',
-      'logout_description': 'Are you sure to logout',
+      'logout_description': 'Are you sure you want to log out',
       'logout_loading_title': 'Log out',
       'logout_loading_description': 'Please wait while log out...',
       'success': 'Successful',

@@ -40,7 +40,7 @@ customDialog({
                 Get.back();
               },
           style: TextButton.styleFrom(
-            backgroundColor: Theme.of(Get.context!).primaryColor,
+            backgroundColor: AppColors.color1,
           ),
           child: Text(
             'ok_btn'.tr,
@@ -484,7 +484,7 @@ logoutDialog(
       TextButton(
         onPressed: onPressed,
         style: TextButton.styleFrom(
-          backgroundColor: Theme.of(Get.context!).hintColor,
+          backgroundColor: AppColors.color2,
         ),
         child: AppTextWidgets.mediumTextWithColor(
           text: 'yes_btn'.tr,

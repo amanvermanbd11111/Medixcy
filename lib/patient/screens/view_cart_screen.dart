@@ -1054,7 +1054,7 @@ class ViewCartScreen extends GetView<ViewCartController> {
                                               double.parse(tax)) / 100)
                                           .toStringAsFixed(1)} $CURRENCY",
                                       color: AppColors.WHITE,
-                                      size: 18,
+                                      size: 15,
                                     ),
                                     AppTextWidgets.mediumText(
                                       text: 'total_price1'.tr,

@@ -1,8 +1,12 @@
 import 'package:videocalling_medical/patient/utils/patient_imports.dart';
 import '../../common/utils/app_imports.dart';
 
+
+
 class DAllNearbyController extends GetxController {
-  int page = Get.arguments['page'];
+  ///2 for pharmacy, 1 for doctor
+  int page = 2;
+
   RxBool isErrorInNearby = false.obs;
   RxBool isNearbyLoading = true.obs;
   RxBool isLoadingMore = false.obs;
@@ -11,6 +15,10 @@ class DAllNearbyController extends GetxController {
   RxString lat = "".obs;
   RxString lon = "".obs;
 
+  TextEditingController textController = TextEditingController();
+  RxBool isSearching = false.obs;
+  RxBool isSearchDataLoaded = false.obs;
+  RxString searchKeyword = "".obs;
 
   ScrollController scrollController = ScrollController();
   NearbyDoctorsClass? nearbyDoctorsClass;
@@ -22,6 +30,11 @@ class DAllNearbyController extends GetxController {
   String? selected_city;
 
   var selected_city_name = "".obs;
+
+  RxList<SDoctorData> newData = <SDoctorData>[].obs;
+  SearchDoctorClass? searchDoctorClass;
+
+
 
   @override
   void onInit() {
@@ -48,6 +61,40 @@ class DAllNearbyController extends GetxController {
     });
   }
 
+  onChanged(String value) async {
+    if (value.isEmpty) {
+      newData.clear();
+      isSearching.value = false;
+
+    } else {
+      if (!isSearching.value) {
+        isSearching.value = true;
+
+        await Future.delayed(const Duration(milliseconds: 850));
+      }
+      isSearchDataLoaded.value = false;
+      final response = await get(
+          Uri.parse("${Apis.ServerAddress}/api/searchdoctor?term=$value"))
+          .timeout(const Duration(seconds: Apis.timeOut))
+          .catchError((e) {
+        isSearchDataLoaded.value = true;
+      });
+      if (response.statusCode == 200) {
+        try {
+          final jsonResponse = jsonDecode(response.body);
+          searchDoctorClass = SearchDoctorClass.fromJson(jsonResponse);
+          newData.clear();
+          newData.addAll(searchDoctorClass!.data!.doctorData!);
+          nextUrl.value = searchDoctorClass!.data!.nextPageUrl.toString();
+          isSearchDataLoaded.value = true;
+        } catch (e) {
+          isSearchDataLoaded.value = true;
+        }
+      } else {
+        isSearchDataLoaded.value = true;
+      }
+    }
+  }
   callPharmacyApi({double? latitude, double? longitude, String? cityId}) async {
     final response = await get(Uri.parse(
         "${Apis.ServerAddress}/api/nearbydoctor?type=2&lat=$latitude&lon=$longitude&city_id=${cityId ?? 0}"))

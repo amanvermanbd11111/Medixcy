@@ -42,9 +42,10 @@ class Apis {
       "$ServerAddress/rave-payment?type=3&amount=$amount&user_id=$uid";
 
   static const String AIApiAddress =
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=';
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=';
 
   // static const String AIApiKey = 'abc';
 
-  static const String AIApiKey = 'AIzaSyBCm-ISt4E6wUB4DmUOe6_yqkYc_VlBEPg';
+  static const String AIApiKey = 'AIzaSyB2q2wDVdN4hGC2vJZqPumgfZAUyTSlb1w';
+  //AIzaSyBCm-ISt4E6wUB4DmUOe6_yqkYc_VlBEPg
 }

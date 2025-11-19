@@ -6,6 +6,10 @@ class SpecialityController extends GetxController {
   RxBool isErrorInLoading = false.obs;
   List<Speciality> list = [];
 
+  TextEditingController searchController = TextEditingController();
+  RxString searchKeyword = "".obs;
+  RxList<Speciality> filteredList = <Speciality>[].obs;
+
   getSpeciality() async {
     isLoading.value = true;
     final response =
@@ -20,12 +24,24 @@ class SpecialityController extends GetxController {
         final jsonResponse = jsonDecode(response.body);
         specialityClass = SpecialityClass.fromJson(jsonResponse);
         list.addAll(specialityClass!.data!);
+        filteredList.addAll(list);
         isLoading.value = false;
       }
     } catch (e) {
       isErrorInLoading.value = true;
     }
     Client().close();
+  }
+
+  void onSearchChanged(String value) {
+    searchKeyword.value = value;
+    if (value.isEmpty) {
+      filteredList.value = list;
+    } else {
+      filteredList.value = list.where((speciality) {
+        return speciality.name!.toLowerCase().contains(value.toLowerCase());
+      }).toList();
+    }
   }
 
   @override
@@ -35,5 +51,11 @@ class SpecialityController extends GetxController {
     if (list.isEmpty) {
       getSpeciality();
     }
+  }
+
+  @override
+  void onClose() {
+    searchController.dispose();
+    super.onClose();
   }
 }

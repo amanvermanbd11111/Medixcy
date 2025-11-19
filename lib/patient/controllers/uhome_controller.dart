@@ -79,6 +79,7 @@ class UserHomeController extends GetxController {
     // TODO: implement onInit
     super.onInit();
 getCity();
+    getSpeciality();
     selected_city ="${StorageService.readData(
         key: LocalStorageKeys
             .sortCityId) ??
@@ -181,6 +182,12 @@ getCity();
 
   RxString lat = "".obs;
   RxString lon = "".obs;
+  SpecialityClass? specialityClass;
+  List<Speciality> Specialitylist = [];
+  RxBool isSpecialityLoaded = false.obs;
+
+
+
 
   void _getLocationStart() async {
     isErrorInLoadDoctorData.value = false;
@@ -450,6 +457,30 @@ print(response.request!.url);
       }
     }
   }
+
+  getSpeciality() async {
+    isSpecialityLoaded.value = true;
+    final response =
+    await get(Uri.parse("${Apis.ServerAddress}/api/getspeciality"))
+        .timeout(const Duration(seconds: Apis.timeOut))
+        .catchError((e) {
+      isErrorInLoading.value = true;
+    });
+
+    try {
+      if (response.statusCode == 200) {
+        final jsonResponse = jsonDecode(response.body);
+        specialityClass = SpecialityClass.fromJson(jsonResponse);
+        Specialitylist.addAll(specialityClass!.data!);
+        Specialitylist = Specialitylist.length > 7 ? Specialitylist.sublist(0, 7) : Specialitylist;
+        isSpecialityLoaded.value = false;
+      }
+    } catch (e) {
+      isErrorInLoading.value = true;
+    }
+    Client().close();
+  }
+
 
   @override
   void onClose() {

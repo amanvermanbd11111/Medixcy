@@ -116,7 +116,7 @@ class MedicineOrderScreen extends GetView<MedicineOrderController> {
                                 text:
                                 "${(medicineOrderController.price.value % 2 == 0 ? medicineOrderController.price.value.toStringAsFixed(1) : medicineOrderController.price.value.toStringAsFixed(1))}$CURRENCY",
                                 color: AppColors.WHITE,
-                                size: 18,
+                                size: 15,
                               ),
                               AppTextWidgets.regularText(
                                 text: 'total_price1'.tr,

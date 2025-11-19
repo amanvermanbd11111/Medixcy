@@ -2,6 +2,8 @@ import 'package:videocalling_medical/common/screens/city_sorting_screen.dart';
 import 'package:videocalling_medical/common/utils/app_imports.dart';
 import 'package:videocalling_medical/patient/utils/patient_imports.dart';
 import '../../common/screens/ai_chat_screen.dart';
+import 'package:videocalling_medical/common/utils/video_call_imports.dart';
+
 
 class UserHomeScreen extends GetView<UserHomeController> {
   final UserHomeController homeController = Get.put(UserHomeController());
@@ -1620,28 +1622,40 @@ class UserHomeScreen extends GetView<UserHomeController> {
           )
         ],
       ),
-      drawer: const CustomDrawer(),
-      body: const SingleChildScrollView(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            GreetingSection(),
-            SizedBox(height: 20),
-            ConsultationCards(),
-            SizedBox(height: 20),
-            SearchDoctorField(),
-            SizedBox(height: 20),
-            DoctorsNearYouSection(),
-            SizedBox(height: 20),
-            SpecializationSection(),
-            SizedBox(height: 20),
-            PromotionalBanner(),
-            SizedBox(height: 20),
-            SpecialFeaturesSection(),
-          ],
-        ),
-      ),
+      drawer:  CustomDrawer(),
+      body: Obx(() {
+        // Show single loading indicator when either data is loading
+        final isLoading = homeController.list2.isEmpty ||
+                         homeController.isSpecialityLoaded.value;
+
+        if (isLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        return SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                GreetingSection(),
+                SizedBox(height: 20),
+                ConsultationCards(),
+                SizedBox(height: 20),
+                SearchDoctorField(),
+                SizedBox(height: 20),
+                DoctorsNearYouSection(),
+                SizedBox(height: 20),
+                SpecializationSection(),
+                SizedBox(height: 20),
+                PromotionalBanner(),
+                SizedBox(height: 20),
+                SpecialFeaturesSection(),
+              ],
+            ),
+          ),
+        );
+      }),
 
 
 
@@ -1670,8 +1684,8 @@ class GreetingSection extends StatelessWidget {
         ),
         Row(
           children: [
-            const Text(
-              'ELON MUSK',
+             Text(
+              StorageService.readData(key: LocalStorageKeys.name)??"",
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -1679,17 +1693,17 @@ class GreetingSection extends StatelessWidget {
               ),
             ),
             const Spacer(),
-            Row(
-              children: [
-                const Icon(Icons.location_on, color: Color(0xFF4ECDC4), size: 16),
-                const SizedBox(width: 4),
-                const Text(
-                  'New Delhi',
-                  style: TextStyle(color: Colors.grey, fontSize: 14),
-                ),
-                const Icon(Icons.keyboard_arrow_down, color: Colors.grey, size: 16),
-              ],
-            ),
+            // Row(
+            //   children: [
+            //     const Icon(Icons.location_on, color: Color(0xFF4ECDC4), size: 16),
+            //     const SizedBox(width: 4),
+            //     const Text(
+            //       'New Delhi',
+            //       style: TextStyle(color: Colors.grey, fontSize: 14),
+            //     ),
+            //     const Icon(Icons.keyboard_arrow_down, color: Colors.grey, size: 16),
+            //   ],
+            // ),
           ],
         ),
       ],
@@ -1702,21 +1716,64 @@ class ConsultationCards extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Row(
+    return Row(
       children: [
         Expanded(
-          child: ConsultationCard(
-            title: 'Online Consultation',
-            image: AppImages.intro2,
-            //color: const Color(0xFFE8F8F7),
+          child: InkWell(
+            onTap:(){
+              Get.toNamed(Routes.specialityScreen)!
+                                               .then(
+                                                 (value) {
+                                               // String selected_city =
+                                               //     "${StorageService.readData(key: LocalStorageKeys.sortCityId) ?? "0"}";
+                                               // String selected_city_n =
+                                               //     "${StorageService.readData(key: LocalStorageKeys.sortCityName) ?? ""}";
+                                               //
+                                               // homeController.callApi(
+                                               //     latitude:
+                                               //     double.parse(latitude.toString()),
+                                               //     longitude: double.parse(
+                                               //         longitude.toString()),
+                                               //     cityId: selected_city);
+                                             },
+                                           );
+                                           Get.delete<SpecialityController>();
+            },
+            child: const ConsultationCard(
+              title: 'Online Consultation',
+              image: AppImages.intro2,
+              //color: const Color(0xFFE8F8F7),
+            ),
           ),
         ),
-        SizedBox(width: 12),
+        const SizedBox(width: 12),
         Expanded(
-          child: ConsultationCard(
-            title: 'Clinic Consultation',
-            image: AppImages.intro1,
-            //color: const Color(0xFFFFF0F5),
+          child: InkWell(
+            onTap: (){
+              Get.toNamed(Routes.specialityScreen)!
+                  .then(
+                    (value) {
+                  // String selected_city =
+                  //     "${StorageService.readData(key: LocalStorageKeys.sortCityId) ?? "0"}";
+                  // String selected_city_n =
+                  //     "${StorageService.readData(key: LocalStorageKeys.sortCityName) ?? ""}";
+                  //
+                  // homeController.callApi(
+                  //     latitude:
+                  //     double.parse(latitude.toString()),
+                  //     longitude: double.parse(
+                  //         longitude.toString()),
+                  //     cityId: selected_city);
+                },
+              );
+              Get.delete<SpecialityController>();
+
+            },
+            child: const ConsultationCard(
+              title: 'Clinic Consultation',
+              image: AppImages.intro1,
+              //color: const Color(0xFFFFF0F5),
+            ),
           ),
         ),
       ],
@@ -1775,7 +1832,9 @@ class ConsultationCard extends StatelessWidget {
 }
 
 class SearchDoctorField extends StatelessWidget {
-  const SearchDoctorField({super.key});
+  final UserHomeController homeController = Get.find<UserHomeController>();
+
+   SearchDoctorField({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -1786,60 +1845,256 @@ class SearchDoctorField extends StatelessWidget {
         borderRadius: BorderRadius.circular(15),
         border: Border.all(color: Colors.grey[300]!),
       ),
-      child: const TextField(
-        decoration: InputDecoration(
-          hintText: 'Search Your Doctor',
-          hintStyle: TextStyle(color: Colors.grey),
-          prefixIcon: Icon(Icons.search, color: Color(0xFF4ECDC4)),
-          border: InputBorder.none,
+      child: GestureDetector(
+        onTap: () async{
+          Get.focusScope?.unfocus();
+          await Get.toNamed(
+            Routes.dAllNearbyScreen,
+            arguments: {'page': 1},
+          )!
+              .then((value) {
+            String selectedCity = "${StorageService.readData(key: LocalStorageKeys.sortCityId) ?? "0"}";
+            homeController.callApi(
+              latitude: double.parse(latitude.toString()),
+              longitude: double.parse(longitude.toString()),
+              cityId: selectedCity,
+            );
+          });
+          Get.delete<DAllNearbyController>();
+        },
+        child: AbsorbPointer(
+          child: const TextField(
+            decoration: InputDecoration(
+              hintText: 'Search Your Doctor',
+              hintStyle: TextStyle(color: Colors.grey),
+              prefixIcon: Icon(Icons.search, color: Color(0xFF4ECDC4)),
+              border: InputBorder.none,
+            ),
+          ),
         ),
       ),
     );
   }
 }
 
+// class DoctorsNearYouSection extends StatelessWidget {
+//   const DoctorsNearYouSection({super.key});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Column(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         const Text(
+//           'Doctors near you',
+//           style: TextStyle(
+//             fontSize: 18,
+//             fontWeight: FontWeight.bold,
+//             color: Colors.black,
+//           ),
+//         ),
+//         const SizedBox(height: 12),
+//         SizedBox(
+//           height: 145,
+//           child: ListView(
+//             scrollDirection: Axis.horizontal,
+//             children: const [
+//               DoctorCard(
+//                 name: 'Dr. Akshay Rana',
+//                 specialty: 'General Physician',
+//                 experience: '5 Years Experience',
+//               ),
+//               DoctorCard(
+//                 name: 'Dr. Umar Ahmad',
+//                 specialty: 'Dental Surgeon',
+//                 experience: '6 Years Experience',
+//               ),
+//               DoctorCard(
+//                 name: 'Dr. Sanjay Singh',
+//                 specialty: 'Orthopedic Surgeon',
+//                 experience: '5 Years Experience',
+//               ),
+//             ],
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }
+
 class DoctorsNearYouSection extends StatelessWidget {
-  const DoctorsNearYouSection({super.key});
+  final UserHomeController homeController = Get.find<UserHomeController>();
+
+  DoctorsNearYouSection({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Doctors near you',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
+    return Obx(() {
+      // handle error state
+      if (homeController.isErrorInLoadDoctorData.value) {
+        return SizedBox(); // or an error widget
+      }
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Doctors near you',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    Get.focusScope?.unfocus();
+
+                    //going to doctor screen
+                    await Get.toNamed(
+                      Routes.dAllNearbyScreen,
+                      arguments: {'page': 1},
+                    )!
+                        .then((value) {
+                      String selectedCity = "${StorageService.readData(key: LocalStorageKeys.sortCityId) ?? "0"}";
+                      homeController.callApi(
+                        latitude: double.parse(latitude.toString()),
+                        longitude: double.parse(longitude.toString()),
+                        cityId: selectedCity,
+                      );
+                    });
+                    Get.delete<DAllNearbyController>();
+                  },
+                  child: Text(
+                    'See all',
+                    style: TextStyle(color: Theme.of(context).hintColor),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-        const SizedBox(height: 12),
-        SizedBox(
-          height: 145,
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            children: const [
-              DoctorCard(
-                name: 'Dr. Akshay Rana',
-                specialty: 'General Physician',
-                experience: '5 Years Experience',
-              ),
-              DoctorCard(
-                name: 'Dr. Umar Ahmad',
-                specialty: 'Dental Surgeon',
-                experience: '6 Years Experience',
-              ),
-              DoctorCard(
-                name: 'Dr. Sanjay Singh',
-                specialty: 'Orthopedic Surgeon',
-                experience: '5 Years Experience',
-              ),
-            ],
+          const SizedBox(height: 12),
+
+          // Horizontal ListView for doctors
+          SizedBox(
+            height: 200, // height for doctor card
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              itemCount: homeController.list2.length,
+              itemBuilder: (context, index) {
+                final doctor = homeController.list2[index];
+                return InkWell(
+                  onTap: () async {
+                    await Get.toNamed(
+                      Routes.doctorDetailScreen,
+                      arguments: {'id': doctor.id.toString(), 'type': 1},
+                    );
+                    Get.delete<DoctorDetailController>();
+                  },
+                  child: Container(
+                    width: 150,
+                    margin: const EdgeInsets.only(right: 12),
+                    padding: EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15),
+                      border: Border.all(color: Color(0XFFACACAC))
+                      // boxShadow: [
+                      //   BoxShadow(
+                      //     color: Colors.grey.withOpacity(0.15),
+                      //     blurRadius: 6,
+                      //     offset: const Offset(0, 4),
+                      //   ),
+                      // ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Doctor image
+                        ClipRRect(
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(15),
+                            topRight: Radius.circular(15),
+                          ),
+                          child: CachedNetworkImage(
+                            imageUrl: doctor.image ?? "",
+                            height: 120,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) => Container(
+                              color: Theme.of(context).primaryColorLight,
+                              child: Center(
+                                child: Image.asset(
+                                  AppImages.tab3dUnselect,
+                                  height: 40,
+                                  width: 40,
+                                ),
+                              ),
+                            ),
+                            errorWidget: (context, url, error) => Container(
+                              color: Theme.of(context).primaryColorLight,
+                              child: Center(
+                                child: Image.asset(
+                                  AppImages.tab3dUnselect,
+                                  height: 40,
+                                  width: 40,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        // Doctor details
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                doctor.name ?? "",
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                doctor.departmentName ?? "",
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
           ),
-        ),
-      ],
-    );
+
+          // Loader for pagination
+          // if (homeController.nextUrlDoctor.value != "null")
+          //   const Padding(
+          //     padding: EdgeInsets.only(top: 15),
+          //     child: CircularProgressIndicator(),
+          //   ),
+        ],
+      );
+    });
   }
 }
 
@@ -1904,120 +2159,229 @@ class DoctorCard extends StatelessWidget {
   }
 }
 
-class SpecializationSection extends StatelessWidget {
-  const SpecializationSection({super.key});
+class SpecializationSection extends StatefulWidget {
+   SpecializationSection({super.key});
+
+  @override
+  State<SpecializationSection> createState() => _SpecializationSectionState();
+}
+
+class _SpecializationSectionState extends State<SpecializationSection> {
+  final UserHomeController homeController = Get.find<UserHomeController>();
 
   @override
   Widget build(BuildContext context) {
+    final list = homeController.Specialitylist;
+    // show max 7 items + 1 "more"
+    final displayList = list.length > 7 ? list.sublist(0, 7) : list;
+
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Specialization',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Specialization',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
           ),
-        ),
-        const SizedBox(height: 12),
-        GridView.count(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          crossAxisCount: 4,
-          crossAxisSpacing: 16,
-          mainAxisSpacing: 25,
-          children: const [
-            SpecializationCard(
-              icon: Icons.medical_services,
-              title: 'General Physician',
-              bgColor: Color(0xFFE8F8F7),
+          const SizedBox(height: 12),
+          // GridView.count(
+          //   shrinkWrap: true,
+          //   physics: const NeverScrollableScrollPhysics(),
+          //   crossAxisCount: 4,
+          //   crossAxisSpacing: 16,
+          //   mainAxisSpacing: 25,
+          //   children: const [
+          //     SpecializationCard(
+          //       icon: Icons.medical_services,
+          //       title: 'General Physician',
+          //       bgColor: Color(0xFFE8F8F7),
+          //     ),
+          //     SpecializationCard(
+          //       icon: Icons.healing,
+          //       title: 'Dental Health',
+          //       bgColor: Color(0xFFFFF8E1),
+          //     ),
+          //     SpecializationCard(
+          //       icon: Icons.local_hospital,
+          //       title: 'Homeopathy',
+          //       bgColor: Color(0xFFE8F5E8),
+          //     ),
+          //     SpecializationCard(
+          //       icon: Icons.child_care,
+          //       title: 'Child Specialist',
+          //       bgColor: Color(0xFFFFF0F5),
+          //     ),
+          //     SpecializationCard(
+          //       icon: Icons.hearing,
+          //       title: 'Ear, Nose & Throat',
+          //       bgColor: Color(0xFFFFF0F5),
+          //     ),
+          //     SpecializationCard(
+          //       icon: Icons.face,
+          //       title: 'Skin & Hair',
+          //       bgColor: Color(0xFFE8F8F7),
+          //     ),
+          //     SpecializationCard(
+          //       icon: Icons.female,
+          //       title: 'Women\'s Health',
+          //       bgColor: Color(0xFFFFF0F5),
+          //     ),
+          //     SpecializationCard(
+          //       icon: Icons.add,
+          //       title: '& more',
+          //       bgColor: Color(0xFFE8F8F7),
+          //     ),
+          //   ],
+          // ),
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: displayList.length + 1, // add +1 for "+ more"
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 4,
+              childAspectRatio: 1,
+              //crossAxisSpacing: 10,
+              mainAxisSpacing: 25,
             ),
-            SpecializationCard(
-              icon: Icons.healing,
-              title: 'Dental Health',
-              bgColor: Color(0xFFFFF8E1),
-            ),
-            SpecializationCard(
-              icon: Icons.local_hospital,
-              title: 'Homeopathy',
-              bgColor: Color(0xFFE8F5E8),
-            ),
-            SpecializationCard(
-              icon: Icons.child_care,
-              title: 'Child Specialist',
-              bgColor: Color(0xFFFFF0F5),
-            ),
-            SpecializationCard(
-              icon: Icons.hearing,
-              title: 'Ear, Nose & Throat',
-              bgColor: Color(0xFFFFF0F5),
-            ),
-            SpecializationCard(
-              icon: Icons.face,
-              title: 'Skin & Hair',
-              bgColor: Color(0xFFE8F8F7),
-            ),
-            SpecializationCard(
-              icon: Icons.female,
-              title: 'Women\'s Health',
-              bgColor: Color(0xFFFFF0F5),
-            ),
-            SpecializationCard(
-              icon: Icons.add,
-              title: '& more',
-              bgColor: Color(0xFFE8F8F7),
-            ),
-          ],
-        ),
-      ],
-    );
+            itemBuilder: (context, index) {
+              // handle "+ more" card
+              if (index == displayList.length) {
+                return InkWell(
+                  onTap: () {
+                    Get.toNamed(Routes.specialityScreen);
+                    },
+                  child: Container(
+                    child: SpecializationCard(
+                      icon: Icons.add,
+                      title: "& more",
+                      bgColor: const Color(0xFFE8F8F7),
+                    ),
+                  ),
+                );
+              }
+
+              final speciality = homeController.Specialitylist[index];
+              return Container(
+
+                child: InkWell(
+                  onTap: () {
+                    Get.toNamed(
+                      Routes.specialityDoctorScreen,
+                      arguments: {
+                        'id': speciality.id.toString(),
+                        'name': speciality.name.toString(),
+                      },
+                    );
+                    Get.delete<SpecialityDoctorController>();
+                  },
+                  child: SpecializationCard(
+                    networkIcon: speciality.icon, // support image from API
+                    title: speciality.name ?? '',
+                    bgColor: const Color(0xFFE8F8F7),
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      );
   }
 }
 
+// class SpecializationCard extends StatelessWidget {
+//   final IconData icon;
+//   final String title;
+//   final Color bgColor;
+//
+//   const SpecializationCard({
+//     super.key,
+//     required this.icon,
+//     required this.title,
+//     required this.bgColor,
+//   });
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Column(
+//       mainAxisSize: MainAxisSize.min,           // <-- use min, not max
+//
+//       mainAxisAlignment: MainAxisAlignment.center,
+//       children: [
+//         Container(
+//           height: 60,
+//           width: 60,
+//           decoration: BoxDecoration(
+//             shape: BoxShape.circle,
+//             border: Border.all(color: Colors.grey.shade300),
+//           ),
+//           child: Icon(
+//             icon,
+//             size: 28,
+//             color: const Color(0xFF4ECDC4),
+//           ),
+//         ),
+//         const SizedBox(height: 6),
+//         Flexible(                               // <-- allow multi-line text
+//           child: Text(
+//             title,
+//             textAlign: TextAlign.center,
+//             maxLines: 2,                       // optional safety limit
+//             overflow: TextOverflow.visible,    // keep 2 lines visible
+//             style: const TextStyle(
+//               fontSize: 10,
+//               fontWeight: FontWeight.w500,
+//             ),
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }
+
 class SpecializationCard extends StatelessWidget {
-  final IconData icon;
+  final IconData? icon;
+  final String? networkIcon;
   final String title;
   final Color bgColor;
 
   const SpecializationCard({
-    super.key,
-    required this.icon,
+    Key? key,
+    this.icon,
+    this.networkIcon,
     required this.title,
     required this.bgColor,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisSize: MainAxisSize.min,           // <-- use min, not max
-
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          height: 60,
-          width: 60,
+          height: 70,
+          width: 70,
           decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(color: Colors.grey.shade300),
+            color: bgColor,
+            borderRadius: BorderRadius.circular(50),
           ),
-          child: Icon(
-            icon,
-            size: 28,
-            color: const Color(0xFF4ECDC4),
+          child: Padding(
+            padding: const EdgeInsets.all(15),
+            child: networkIcon != null
+                ? Image.network(networkIcon!, fit: BoxFit.contain)
+                : Icon(icon, size: 30),
           ),
         ),
-        const SizedBox(height: 6),
-        Flexible(                               // <-- allow multi-line text
+        const SizedBox(height: 8),
+        Flexible(
           child: Text(
             title,
             textAlign: TextAlign.center,
-            maxLines: 2,                       // optional safety limit
-            overflow: TextOverflow.visible,    // keep 2 lines visible
-            style: const TextStyle(
-              fontSize: 10,
-              fontWeight: FontWeight.w500,
-            ),
+            style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w500),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
       ],
@@ -2225,7 +2589,11 @@ class SpecialFeatureCard extends StatelessWidget {
 
 
 class CustomDrawer extends StatelessWidget {
-  const CustomDrawer({super.key});
+   CustomDrawer({super.key});
+
+  final UserHomeController homeController = Get.find<UserHomeController>();
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -2246,38 +2614,28 @@ class CustomDrawer extends StatelessWidget {
                       child: Icon(Icons.person, color: Colors.white, size: 30),
                     ),
                     const SizedBox(width: 16),
-                    const Expanded(
+                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Elon Musk',
-                            style: TextStyle(
+                            StorageService.readData(key: LocalStorageKeys.name) ??"Login",
+                            style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          Text(
-                            'Medixy Id: 2024012',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey,
-                            ),
-                          ),
+                          // const Text(
+                          //   'Medixy Id: 2024012',
+                          //   style: TextStyle(
+                          //     fontSize: 14,
+                          //     color: Colors.grey,
+                          //   ),
+                          // ),
                         ],
                       ),
                     ),
-                    Row(
-                      children: [
-                        const Icon(Icons.location_on, color: Color(0xFF4ECDC4), size: 16),
-                        const SizedBox(width: 4),
-                        const Text(
-                          'Delhi',
-                          style: TextStyle(color: Colors.grey, fontSize: 12),
-                        ),
-                        const Icon(Icons.keyboard_arrow_down, color: Colors.grey, size: 16),
-                      ],
-                    ),
+
                   ],
                 ),
               ],
@@ -2290,111 +2648,194 @@ class CustomDrawer extends StatelessWidget {
                 DrawerItem(
                   icon: Icons.calendar_today,
                   title: 'My Appointments',
-                  onTap: () {},
+                  onTap: () {
+                    Get.back();
+                    Get.to(UserPastAppointmentsScreen());
+
+                  },
                 ),
                 DrawerItem(
                   icon: Icons.shopping_bag,
                   title: 'Orders',
-                  onTap: () {},
+                  onTap: () {
+                    Get.back();
+                    Get.to(PharmacyOrderScreen());
+                  },
                 ),
+                // DrawerItem(
+                //   icon: Icons.people,
+                //   title: 'My Doctors',
+                //   onTap: () async{
+                //     //going to doctor screen
+                //     await Get.toNamed(
+                //       Routes.dAllNearbyScreen,
+                //       arguments: {'page': 1},
+                //     )!
+                //         .then((value) {
+                //       String selectedCity = "${StorageService.readData(key: LocalStorageKeys.sortCityId) ?? "0"}";
+                //       homeController.callApi(
+                //         latitude: double.parse(latitude.toString()),
+                //         longitude: double.parse(longitude.toString()),
+                //         cityId: selectedCity,
+                //       );
+                //     });
+                //     Get.delete<DAllNearbyController>();
+                //   },
+                // ),
+                // DrawerItem(
+                //   icon: Icons.medical_services,
+                //   title: 'Medical Records',
+                //   onTap: () {},
+                // ),
+                // DrawerItem(
+                //   icon: Icons.payment,
+                //   title: 'Payment History',
+                //   onTap: () {},
+                // ),
+                // DrawerItem(
+                //   icon: Icons.security,
+                //   title: 'Insurance Policy',
+                //   onTap: () {},
+                // ),
+                // DrawerItem(
+                //   icon: Icons.article,
+                //   title: 'HealthLine Articles',
+                //   onTap: () {},
+                // ),
+                // DrawerItem(
+                //   icon: Icons.location_city,
+                //   title: 'Our Centers',
+                //   onTap: () {},
+                // ),
+                // DrawerItem(
+                //   icon: Icons.feedback,
+                //   title: 'Suggestion & Feedback',
+                //   onTap: () {},
+                // ),
+                // DrawerItem(
+                //   icon: Icons.person_add,
+                //   title: 'Invite Friends',
+                //   onTap: () {},
+                // ),
+                // DrawerItem(
+                //   icon: Icons.help,
+                //   title: 'Help Center',
+                //   onTap: () {},
+                // ),
+                // DrawerItem(
+                //   icon: Icons.local_hospital,
+                //   title: 'Are you a doctor ?',
+                //   onTap: () {},
+                // ),
                 DrawerItem(
-                  icon: Icons.people,
-                  title: 'My Doctors',
-                  onTap: () {},
-                ),
-                DrawerItem(
-                  icon: Icons.medical_services,
-                  title: 'Medical Records',
-                  onTap: () {},
-                ),
-                DrawerItem(
-                  icon: Icons.payment,
-                  title: 'Payment History',
-                  onTap: () {},
-                ),
-                DrawerItem(
-                  icon: Icons.security,
-                  title: 'Insurance Policy',
-                  onTap: () {},
-                ),
-                DrawerItem(
-                  icon: Icons.article,
-                  title: 'HealthLine Articles',
-                  onTap: () {},
-                ),
-                DrawerItem(
-                  icon: Icons.location_city,
-                  title: 'Our Centers',
-                  onTap: () {},
-                ),
-                DrawerItem(
-                  icon: Icons.feedback,
-                  title: 'Suggestion & Feedback',
-                  onTap: () {},
-                ),
-                DrawerItem(
-                  icon: Icons.person_add,
-                  title: 'Invite Friends',
-                  onTap: () {},
-                ),
-                DrawerItem(
-                  icon: Icons.help,
-                  title: 'Help Center',
-                  onTap: () {},
-                ),
-                DrawerItem(
-                  icon: Icons.local_hospital,
-                  title: 'Are you a doctor ?',
-                  onTap: () {},
+                  icon: Icons.logout,
+                  title: 'Logout',
+                  onTap: () {
+
+                    logoutDialog(
+                      s1: 'logout_title'.tr,
+                      s2: 'logout_description'.tr,
+                      onPressed: () async {
+                        Get.back();
+                        customDialog1(
+                          s1: 'logout_loading_title'.tr,
+                          s2: 'logout_loading_description'.tr,
+                        );
+                        try {
+
+                          print(" connectycube destroy");
+
+                          CallManager.instance.destroy();
+                          CubeChatConnection.instance.destroy();
+
+                          await PushNotificationsManager.instance
+                              .unsubscribe();
+
+                          await SharedPrefs.deleteUserData();
+                          await signOut();
+                        } catch (e) {}
+
+
+                        StorageService.writeBoolData(
+                          key: LocalStorageKeys.isLoggedIn,
+                          value: false,
+                        );
+                        StorageService.writeBoolData(
+                          key: LocalStorageKeys.isLoggedInAsDoctor,
+                          value: false,
+                        );
+                        String? str = StorageService.readData(
+                          key: LocalStorageKeys.token,
+                        );
+                        box.erase();
+                        if (str != null) {
+                          StorageService.writeBoolData(
+                            key: LocalStorageKeys.isTokenExist,
+                            value: true,
+                          );
+                          StorageService.writeStringData(
+                            key: LocalStorageKeys.token,
+                            value: str,
+                          );
+                        }
+                        Get.back();
+
+                        await Get.offAllNamed(Routes.loginWithOtpScreen,
+                            arguments: {
+                              "isBack": false,
+                            });
+                      },
+                    );
+                  },
                 ),
               ],
             ),
           ),
-          Container(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              children: [
-                const Text(
-                  'Join us at',
-                  style: TextStyle(color: Colors.grey),
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.camera_alt),
-                      onPressed: () {},
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.play_arrow),
-                      onPressed: () {},
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.facebook),
-                      onPressed: () {},
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () {},
-                    ),
-                  ],
-                ),
-                const Text(
-                  'HealthLine',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF4ECDC4),
-                  ),
-                ),
-                const Text(
-                  'Made in India',
-                  style: TextStyle(color: Colors.grey, fontSize: 12),
-                ),
-              ],
-            ),
-          ),
+          // Container(
+          //   padding: const EdgeInsets.all(20),
+          //   child: Column(
+          //     children: [
+          //       const Text(
+          //         'Join us at',
+          //         style: TextStyle(color: Colors.grey),
+          //       ),
+          //       const SizedBox(height: 8),
+          //       Row(
+          //         mainAxisAlignment: MainAxisAlignment.center,
+          //         children: [
+          //           IconButton(
+          //             icon: const Icon(Icons.camera_alt),
+          //             onPressed: () {},
+          //           ),
+          //           IconButton(
+          //             icon: const Icon(Icons.play_arrow),
+          //             onPressed: () {},
+          //           ),
+          //           IconButton(
+          //             icon: const Icon(Icons.facebook),
+          //             onPressed: () {},
+          //           ),
+          //           IconButton(
+          //             icon: const Icon(Icons.close),
+          //             onPressed: () {},
+          //           ),
+          //         ],
+          //       ),
+          //       const Text(
+          //         'HealthLine',
+          //         style: TextStyle(
+          //           fontSize: 16,
+          //           fontWeight: FontWeight.bold,
+          //           color: Color(0xFF4ECDC4),
+          //         ),
+          //       ),
+          //       const Text(
+          //         'Made in India',
+          //         style: TextStyle(color: Colors.grey, fontSize: 12),
+          //       ),
+          //     ],
+          //   ),
+          // ),
         ],
       ),
     );

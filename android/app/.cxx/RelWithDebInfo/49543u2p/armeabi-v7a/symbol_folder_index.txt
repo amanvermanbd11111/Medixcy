@@ -1,0 +1,1 @@
+/Users/amanverma/Documents/Development/flutter projects/Medixcy/build/app/intermediates/cxx/RelWithDebInfo/49543u2p/obj/armeabi-v7a

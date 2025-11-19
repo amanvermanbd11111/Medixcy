@@ -51,6 +51,20 @@ class AppImages {
   static const String sliderPlaceholder = "assets/home_screen/slider_placeholder.png";
   static const String sliderError = "assets/home_screen/slider_error.png";
 
+  static const String tab1 = "assets/tabs/icon1.png";
+  static const String tab2 = "assets/tabs/icon2.png";
+  static const String tab3 = "assets/tabs/icon3.png";
+  static const String tab4 = "assets/tabs/icon4.png";
+  static const String assistant = "assets/tabs/assistant.png";
+
+  ///comming soon
+
+  static const String blood_bank = "assets/intro_screen/blood_bank.png";
+  static const String lab_test = "assets/intro_screen/lap_test.png";
+
+
+
+
   /// patient make appointment screen
   static const String dayActive = "assets/make_appointment/day_active.png";
   static const String dayUnActive = "assets/make_appointment/day_unactive.png";

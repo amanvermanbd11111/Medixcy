@@ -3,51 +3,87 @@ import 'package:videocalling_medical/patient/utils/patient_imports.dart';
 import '../../common/screens/city_sorting_screen.dart';
 
 class DAllNearbyScreen extends GetView<DAllNearbyController> {
-  final DAllNearbyController nearbyController = Get.put(DAllNearbyController());
+  DAllNearbyScreen({Key? key}) : super(key: key) {
+    // Delete existing controller if it exists and reinitialize with correct page
+    Get.delete<DAllNearbyController>();
+    Get.put(DAllNearbyController()..page = Get.arguments?['page'] ?? 2);
+  }
+
+  DAllNearbyController get nearbyController => Get.find<DAllNearbyController>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: Container(),
-        flexibleSpace: Obx(() {
-          print("${nearbyController.selected_city_name.value}");
-          return CustomAppBar(
-            title: nearbyController.page == 2
-                ? 'pharmacy'.tr
-                : nearbyController.page == 3
-                ? 'Laboratory'.tr
-                : 'nearby_doctors'.tr,
-            isTitle2:
-            (nearbyController.selected_city_name.value.toString() == 0 ||
-                nearbyController.selected_city_name.value.toString() ==
-                    "" ||
-                nearbyController.selected_city_name.value.toString() ==
-                    "not")
-                ? false
-                : true,
-
-            title2: "${nearbyController.selected_city_name.value}",
-
-            isBackArrow: true,
-            sortIcon: true,
-            onPressedClear: () async {
-              Get.to(CitySortingScreen())!.then((cityId) {
-                if (cityId != null) {
-                  nearbyController.selected_city =
-                      cityId.toString(); // Update the selected city ID
-                  nearbyController.selected_city_name.value =
-                      StorageService.readData(
-                          key: LocalStorageKeys.sortCityName) ??
-                          "not";
-                  refreshScreen(nearbyController.selected_city!);
-                }
-              });
+      appBar: PreferredSize(
+        preferredSize: nearbyController.page == 2?const Size.fromHeight(50):const Size.fromHeight(135),
+        child: nearbyController.page == 2?AppBar(
+          elevation: 0,
+          flexibleSpace: CustomAppBar(
+            title: 'My Pharmacy'.tr,
+            onPressed: () {
+              Get.back();
             },
+            isBackArrow: false,
+          ),
+          leading: Container(),
+        ):AppBar(
+          leading: Container(),
 
-            onPressed: () => Get.back(),
-          );
-        }),
+          flexibleSpace: Obx(() {
+            print("${nearbyController.selected_city_name.value}");
+            return MedAppBar(
+              title: nearbyController.page == 2
+                  ? 'pharmacy'.tr
+                  : nearbyController.page == 3
+                  ? 'Laboratory'.tr
+                  : 'nearby_doctors'.tr,
+              isTitle2:
+              (nearbyController.selected_city_name.value.toString() == 0 ||
+                  nearbyController.selected_city_name.value.toString() ==
+                      "" ||
+                  nearbyController.selected_city_name.value.toString() ==
+                      "not")
+                  ? false
+                  : true,
+
+              title2: "${nearbyController.selected_city_name.value}",
+
+              isBackArrow: nearbyController.page == 2?false:true,
+              sortIcon: true,
+              showSearchField: true,
+              searchController: nearbyController.textController,
+              onSearchChanged: (val) {
+                nearbyController.searchKeyword.value = val;
+                nearbyController.onChanged(val);
+              },
+              onSearchSubmitted: (val) {
+                nearbyController.searchKeyword.value = val;
+              },
+              searchLoadingColor: nearbyController.isSearching.value &&
+                  !nearbyController.isSearchDataLoaded.value
+                  ? AlwaysStoppedAnimation(Theme.of(context).hintColor)
+                  : AlwaysStoppedAnimation(AppColors.transparentColor),
+              onPressedClear: () async {
+                Get.to(CitySortingScreen())!.then((cityId) {
+                  if (cityId != null) {
+                    nearbyController.selected_city =
+                        cityId.toString(); // Update the selected city ID
+                    nearbyController.selected_city_name.value =
+                        StorageService.readData(
+                            key: LocalStorageKeys.sortCityName) ??
+                            "not";
+                    refreshScreen(nearbyController.selected_city!);
+                  }
+                });
+              },
+
+              onPressed: () => Get.back(),
+            );
+          }),
+        )
+
+
+        ,
       ),
       backgroundColor: AppColors.LIGHT_GREY_SCREEN_BACKGROUND,
       body: Obx(() => nearbyController.isErrorInLoading.value
@@ -84,6 +120,55 @@ class DAllNearbyScreen extends GetView<DAllNearbyController> {
                 const SizedBox(
                   height: 10,
                 ),
+
+                // Show search results when searching
+                nearbyController.searchKeyword.value.isNotEmpty
+                    ? nearbyController.newData.isEmpty
+                    ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const SizedBox(height: 30),
+                      AppTextWidgets.regularText(
+                          text: 'data_not_found'.tr,
+                          size: 12,
+                          color: AppColors.BLACK),
+                    ],
+                  ),
+                )
+                    : GridView.builder(
+                  shrinkWrap: true,
+                  physics: const ClampingScrollPhysics(),
+                  gridDelegate:
+                  const SliverGridDelegateWithMaxCrossAxisExtent(
+                      maxCrossAxisExtent: 200,
+                      childAspectRatio: 0.75,
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10),
+                  itemCount: nearbyController.newData.length,
+                  itemBuilder: (BuildContext ctx, index) {
+                    return DoctorGrid(
+                      onTap: () async {
+                        await Get.toNamed(
+                            Routes.doctorDetailScreen,
+                            arguments: {
+                              'id': nearbyController.newData[index].id
+                                  .toString(),
+                              'type': nearbyController.page
+                            });
+
+                        Get.delete<DoctorDetailController>();
+                      },
+                      type: nearbyController.page??2,
+                      name: nearbyController.newData[index].name ?? "",
+                      departmentName:
+                      nearbyController.newData[index].departmentName ?? "",
+                      imgPath: nearbyController.newData[index].image ?? "",
+                    );
+                  },
+                )
+                    :
+                // Show regular list when not searching
                 nearbyController.isNearbyLoading.value
                     ? SizedBox(
                   height: Get.height * 0.4,
@@ -154,7 +239,7 @@ class DAllNearbyScreen extends GetView<DAllNearbyController> {
 
                         Get.delete<DoctorDetailController>();
                       },
-                      type: nearbyController.page,
+                      type: nearbyController.page??2,
                       name: nearbyController.page == 2 ||
                           nearbyController.page == 3
                           ? nearbyController.list1[index].name ??

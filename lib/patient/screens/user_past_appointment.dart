@@ -1,3 +1,4 @@
+import 'package:googleapis/admob/v1.dart';
 import 'package:videocalling_medical/common/utils/app_imports.dart';
 import 'package:videocalling_medical/patient/utils/patient_imports.dart';
 
@@ -9,6 +10,19 @@ class UserPastAppointmentsScreen
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      ///new code
+      appBar: AppBar(
+        elevation: 0,
+        flexibleSpace: CustomAppBar(
+          title: 'My Appointments'.tr,
+          onPressed: () {
+            Get.back();
+          },
+          isBackArrow: true,
+        ),
+        leading: Container(),
+      ),
+      ///
       backgroundColor: AppColors.LIGHT_GREY_SCREEN_BACKGROUND,
       body:
       Container(

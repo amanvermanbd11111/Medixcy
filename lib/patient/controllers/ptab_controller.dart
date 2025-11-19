@@ -5,6 +5,7 @@ import 'package:videocalling_medical/patient/screens/Tab_screen_order_screen.dar
 import 'package:videocalling_medical/patient/utils/patient_imports.dart';
 
 class PatientTabController extends GetxController {
+  RxInt index = 0.obs;
   @override
   void onInit() {
     // TODO: implement onInit
@@ -116,22 +117,44 @@ class PatientTabController extends GetxController {
     });
   }
 
+  void changeIndex(int newIndex) {
+    index.value = newIndex;
+  }
+
+
+
   getPage(int page) {
     switch (page) {
       case 0:
         return UserHomeScreen();
+
+        //going to pharmacy screen
       case 1:
         // return UserPastAppointmentsScreen();
-        return
-          TabScreenOrderScreen();
+        return DAllNearbyScreen();
+      // case 2:
+      //   return LoginAsDoctor();
       case 2:
-        return LoginAsDoctor();
+        return
+          //PChatListScreen();
+         const ComingSoonScreen(
+          title: "Lab Test",
+          description:
+          "We're working hard to bring lab test booking right to your fingertips. Stay tuned for convenient health checkups from home!",
+          imagePath: AppImages.lab_test,
+        );
+
       case 3:
-        return PChatListScreen();
-      case 4:
-        return MoreScreen();
+        return
+          //MoreScreen();
+          const ComingSoonScreen(
+            title: "Blood Bank",
+            description:
+            "Soon you’ll be able to find and connect with nearby blood donors and banks in just a few taps.",
+            imagePath: AppImages.blood_bank,
+          );
     }
   }
 
-  RxInt index = 0.obs;
+
 }

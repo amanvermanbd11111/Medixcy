@@ -4,10 +4,12 @@ import 'package:videocalling_medical/common/utils/video_call_imports.dart';
 
 
 class RegisterPatientController extends GetxController {
+  String phone="0";
+
   RxString name = "".obs;
   RxString phoneNumber = "".obs;
   RxString email = "".obs;
-  RxString password = "".obs;
+  RxString password = "12345678".obs;
   RxString confirmPassword = "".obs;
   RxString phnNumberError = "".obs;
   RxBool isPhoneNumberError = false.obs;
@@ -19,6 +21,16 @@ class RegisterPatientController extends GetxController {
 
   RxBool passwordVisible = true.obs;
   RxBool passwordVisible1 = true.obs;
+
+  // New fields for profile
+  RxString bloodGroup = "".obs;
+  RxString location = "".obs;
+  RxString pinCode = "".obs;
+  RxString date = "".obs;
+
+  RxString selectedGender = "Male".obs;
+  Rx<DateTime?> selectedDate = Rx<DateTime?>(null);
+  RxBool receiveNotifications = false.obs;
 
   final formKey = GlobalKey<FormState>();
 
@@ -150,6 +162,131 @@ class RegisterPatientController extends GetxController {
       }
     }
   }
+
+  registerNewUser() async {
+    print(" registration function call");
+
+  if (StorageService.readData(key: LocalStorageKeys.isTokenExist) == null) {
+      storeToken();
+    }
+    else {
+      customDialog1(
+        s1: 'creating_account'.tr,
+        s2: 'creating_account1'.tr,
+      );
+      String url = "${Apis.ServerAddress}/api/register";
+      var response = await post(Uri.parse(url), body: {
+        'name': name.value,
+        'email': email.value,
+        'phone': phoneNumber.value,
+        'password': password.value,
+        'token': token.value,
+        'blood_group': bloodGroup.value,
+        'dob': date.value,
+        'gender': selectedGender.value,
+        'location': location.value,
+        'pincode': pinCode.value
+      });
+
+      print("server registration complete");
+      print(response.request!.url);
+      print(response.body);
+
+      Client().close();
+      try {
+        var jsonResponse = await jsonDecode(response.body);
+        if (response.statusCode != 200) {
+          Get.back();
+          customDialog(s1: 'error_s'.tr, s2: 'unable_to_load_data'.tr);
+        }
+        else if (jsonResponse['success'].toString() == "0") {
+          Get.back();
+          error.value = jsonResponse['register'];
+          customDialog(s1: 'error_s'.tr, s2: error.value);
+        }
+        else {
+          customDialog1(
+            s1: 'creating_account_f'.tr,
+            s2: 'creating_account1_f'.tr,
+          );
+          FirebaseDatabase.instance
+              .ref()
+              .child("117${jsonResponse['register']['user_id']}")
+              .set({
+            "name": jsonResponse['register']['name'],
+            "image": jsonResponse['register']['profile_pic'],
+          }).then((value) async {
+            FirebaseDatabase.instance
+                .ref()
+                .child("117${jsonResponse['register']['user_id']}")
+                .child("TokenList")
+                .set({
+              "device": token.value,
+            }).then((value) async {
+              StorageService.writeBoolData(
+                key: LocalStorageKeys.isLoggedIn,
+                value: true,
+              );
+              StorageService.writeStringData(
+                key: LocalStorageKeys.userId,
+                value: jsonResponse['register']['user_id'].toString(),
+              );
+              StorageService.writeStringData(
+                key: LocalStorageKeys.name,
+                value: jsonResponse['register']['name'],
+              );
+              StorageService.writeStringData(
+                key: LocalStorageKeys.email,
+                value: jsonResponse['register']['email'],
+              );
+              StorageService.writeStringData(
+                key: LocalStorageKeys.phone,
+                value: jsonResponse['register']['phone'] == null
+                    ? ""
+                    : jsonResponse['register']['phone'].toString(),
+              );
+              StorageService.writeStringData(
+                key: LocalStorageKeys.password,
+                value: password.value,
+              );
+              StorageService.writeStringData(
+                key: LocalStorageKeys.userIdWithAscii,
+                value: ('117${jsonResponse['register']['user_id']}'),
+              );
+              callConnectyCubeRegisterApi(
+                id: jsonResponse['register']['user_id'].toString(),
+              );
+              Get.back();
+              // page
+              //     .nextPage(
+              //   duration: const Duration(milliseconds: 850),
+              //   curve: Curves.linear,
+              // )
+              //     .then(
+              //       (value) {
+              //     progressIndicatorController.reset();
+              //     progressIndicatorController.forward();
+              //     callConnectyCubeRegisterApi(
+              //       id: jsonResponse['register']['user_id'].toString(),
+              //     );
+              //   },
+              // );
+            }).catchError((error) {
+              Get.back();
+              messageDialog('error_f'.tr, 'firebase_not_add'.tr);
+            });
+          }).catchError((error) {
+            Get.back();
+            messageDialog('error_f'.tr, 'firebase_not_add'.tr);
+          });
+        }
+
+      } catch (e, stackTrace) {
+        Get.back();
+        customDialog(s1: 'error_s'.tr, s2: 'unable_to_load_data'.tr);
+      }
+    }
+  }
   messageDialog(String s1, String s2) {
     customDialog(
       s1: s1,
@@ -265,5 +402,6 @@ class RegisterPatientController extends GetxController {
     // TODO: implement onInit
     super.onInit();
     getToken();
+    phone= Get.arguments['phone']??'0';
   }
 }

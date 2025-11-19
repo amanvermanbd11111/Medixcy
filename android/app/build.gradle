@@ -20,20 +20,22 @@ if (keystorePropertiesFile.exists()) {
 }
 
 def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
-
 if (flutterVersionCode == null) {
-    flutterVersionCode = '1'
+    flutterVersionCode = '6'
 }
 
 def flutterVersionName = localProperties.getProperty('flutter.versionName')
 if (flutterVersionName == null) {
-    flutterVersionName = '1.0'
+    flutterVersionName = '1.0.5'
 }
+
+// Convert to integer for version code
+def versionCodeInt = flutterVersionCode.toInteger()
 
 android{
     namespace "com.medixcy.app"
     compileSdkVersion 35
-    ndkVersion flutter.ndkVersion
+    ndkVersion "27.0.12077973"
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
@@ -51,8 +53,15 @@ android{
         minSdkVersion 23
         targetSdkVersion 35
         multiDexEnabled true
-        versionCode flutterVersionCode.toInteger()
+        versionCode versionCodeInt
         versionName flutterVersionName
+
+        // 16KB page size support - NDK r27 requires this flag
+        externalNativeBuild {
+            cmake {
+                arguments "-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON"
+            }
+        }
     }
 
     signingConfigs {
@@ -73,6 +82,14 @@ android{
             signingConfig signingConfigs.release
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+
+    packagingOptions {
+        jniLibs {
+            // Required for 16KB page size support with AGP 8.5 or lower
+            useLegacyPackaging = true
         }
     }
 }

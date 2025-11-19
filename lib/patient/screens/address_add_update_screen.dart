@@ -144,78 +144,78 @@ class AddressAddUpdateScreen extends GetView<AddressAddUpdateController> {
                 10.hs,
 
                 SingleChildScrollView(
-                  child: Expanded(
-                      child: Column(
-                    children: [
-                      Obx(
-                        () => EditTextField(
+                  child: Column(
+                                      children: [
+                  Obx(
+                    () => EditTextField(
+                      keyboardType: TextInputType.name,
+                      editingController: addressController.tcAddress,
+                      labelText: 'select_address_title'.tr,
+                      errorText: addressController.isTcAddressError.value
+                          ? 'select_address_error'.tr
+                          : null,
+                      onChanged: (val) {
+                        if (val.isNotEmpty) {
+                          addressController.isTcAddressError.value = false;
+                        }
+                      },
+                    ),
+                  ),
+                  Obx(
+                    () => Container(
+
+                      child: Container(
+                        width: Get.width - 20,
+                        child: EditTextField(
                           keyboardType: TextInputType.name,
-                          editingController: addressController.tcAddress,
-                          labelText: 'select_address_title'.tr,
-                          errorText: addressController.isTcAddressError.value
-                              ? 'select_address_error'.tr
+                          editingController: addressController.saveAs,
+                          labelText: 'save_as'.tr,
+                          errorText: addressController.isSaveAsError.value
+                              ? 'save_as_error'.tr
                               : null,
                           onChanged: (val) {
                             if (val.isNotEmpty) {
-                              addressController.isTcAddressError.value = false;
+                              addressController.isSaveAsError.value = false;
                             }
+                          },
+                          onSubmitted: (val) {
+                            FocusScope.of(context).unfocus();
+                            addressController.preformAction();
                           },
                         ),
                       ),
-                      Obx(
-                        () => Container(
-                  
-                          child: Container(
-                            width: Get.width - 20,
-                            child: EditTextField(
-                              keyboardType: TextInputType.name,
-                              editingController: addressController.saveAs,
-                              labelText: 'save_as'.tr,
-                              errorText: addressController.isSaveAsError.value
-                                  ? 'save_as_error'.tr
-                                  : null,
-                              onChanged: (val) {
-                                if (val.isNotEmpty) {
-                                  addressController.isSaveAsError.value = false;
-                                }
-                              },
-                              onSubmitted: (val) {
-                                FocusScope.of(context).unfocus();
-                                addressController.preformAction();
-                              },
-                            ),
-                          ),
-                  
-                          // Row(
-                          //   mainAxisAlignment: MainAxisAlignment.start,
-                          //   children: [
-                          //     AppTextWidgets.regularTextWithColor(
-                          //       text: 'default_address'.tr,
-                          //       color: AppColors.BLACK,
-                          //     ),
-                          //     Obx(
-                          //       () => Checkbox(
-                          //         side: const BorderSide(
-                          //             color: AppColors.color1, width: 1.5),
-                          //         fillColor: addressController.isDefault.value
-                          //             ? const MaterialStatePropertyAll(AppColors.color1)
-                          //             : const MaterialStatePropertyAll(
-                          //                 Colors.transparent),
-                          //         shape: RoundedRectangleBorder(
-                          //             borderRadius: BorderRadius.circular(4)),
-                          //         onChanged: (value) {
-                          //           addressController.isDefault.value =
-                          //               !addressController.isDefault.value;
-                          //         },
-                          //         value: addressController.isDefault.value,
-                          //       ),
-                          //     ),
-                          //   ],
-                          // ),
-                        ),
-                      ),
-                    ],
-                  )),
+
+                      // Row(
+                      //   mainAxisAlignment: MainAxisAlignment.start,
+                      //   children: [
+                      //     AppTextWidgets.regularTextWithColor(
+                      //       text: 'default_address'.tr,
+                      //       color: AppColors.BLACK,
+                      //     ),
+                      //     Obx(
+                      //       () => Checkbox(
+                      //         side: const BorderSide(
+                      //             color: AppColors.color1, width: 1.5),
+                      //         fillColor: addressController.isDefault.value
+                      //             ? const MaterialStatePropertyAll(AppColors.color1)
+                      //             : const MaterialStatePropertyAll(
+                      //                 Colors.transparent),
+                      //         shape: RoundedRectangleBorder(
+                      //             borderRadius: BorderRadius.circular(4)),
+                      //         onChanged: (value) {
+                      //           addressController.isDefault.value =
+                      //               !addressController.isDefault.value;
+                      //         },
+                      //         value: addressController.isDefault.value,
+                      //       ),
+                      //     ),
+                      //   ],
+                      // ),
+                    ),
+                  ),
+
+                                      ],
+                                    ),
                 )
               ],
             ),

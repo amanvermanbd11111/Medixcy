@@ -7,7 +7,7 @@ buildscript {
 
     dependencies {
 
-        classpath 'com.android.tools.build:gradle:8.5.0'
+        classpath 'com.android.tools.build:gradle:8.7.3'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "com.google.gms:google-services:4.4.1"
 
@@ -32,7 +32,7 @@ subprojects {
 subprojects {
     afterEvaluate { project ->
         if (project.hasProperty("android")) {
-            project.android.compileSdkVersion = 34
+            project.android.compileSdkVersion = 35
             // Auto-configure namespace for packages that don't have one
             if (project.android.namespace == null) {
                 def manifest = project.file("src/main/AndroidManifest.xml")

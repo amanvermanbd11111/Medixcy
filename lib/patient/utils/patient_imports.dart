@@ -62,6 +62,8 @@ export 'package:videocalling_medical/patient/bindings/view_cart_binding.dart';
 export 'package:videocalling_medical/patient/controllers/medicine_order_controller.dart';
 export 'package:videocalling_medical/patient/screens/medicine_order_screen.dart';
 export 'package:videocalling_medical/patient/bindings/medicine_order_binding.dart';
+export 'package:videocalling_medical/patient/screens/pharmacy_order_screen.dart';
+
 
 /// select address screen
 export 'package:videocalling_medical/patient/controllers/select_address_controller.dart';
@@ -136,3 +138,7 @@ export 'package:videocalling_medical/patient/screens/pmore_screen.dart';
 /// chat list screen
 export 'package:videocalling_medical/patient/controllers/patient_chat_list_controller.dart';
 export 'package:videocalling_medical/patient/screens/patient_chat_list_screen.dart';
+
+
+/// comming soon
+export 'package:videocalling_medical/patient/screens/comming_soon_screen.dart';
