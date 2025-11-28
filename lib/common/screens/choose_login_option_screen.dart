@@ -64,7 +64,7 @@ class LoginOptionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: data.onTap,
+      onTap: () => data.onTap(context),
       borderRadius: BorderRadius.circular(12),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(10),

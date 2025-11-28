@@ -1,0 +1,1 @@
+/Users/amanverma/Documents/Development/flutter projects/Medixcy/android/CMakeLists.txt

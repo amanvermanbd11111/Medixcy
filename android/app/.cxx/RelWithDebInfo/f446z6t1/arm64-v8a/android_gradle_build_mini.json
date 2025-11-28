@@ -1,0 +1,20 @@
+{
+  "buildFiles": [
+    "/Users/amanverma/Documents/Development/flutter projects/Medixcy/android/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/Users/amanverma/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/Users/amanverma/Documents/Development/flutter projects/Medixcy/android/app/.cxx/RelWithDebInfo/f446z6t1/arm64-v8a",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/Users/amanverma/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/Users/amanverma/Documents/Development/flutter projects/Medixcy/android/app/.cxx/RelWithDebInfo/f446z6t1/arm64-v8a",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {}
+}

@@ -21,12 +21,12 @@ if (keystorePropertiesFile.exists()) {
 
 def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
 if (flutterVersionCode == null) {
-    flutterVersionCode = '6'
+    flutterVersionCode = '10'
 }
 
 def flutterVersionName = localProperties.getProperty('flutter.versionName')
 if (flutterVersionName == null) {
-    flutterVersionName = '1.0.5'
+    flutterVersionName = '1.0.9'
 }
 
 // Convert to integer for version code
@@ -53,13 +53,19 @@ android{
         minSdkVersion 23
         targetSdkVersion 35
         multiDexEnabled true
-        versionCode versionCodeInt
-        versionName flutterVersionName
+        versionCode 10
+        versionName '1.0.9'
 
-        // 16KB page size support - NDK r27 requires this flag
+        // 16KB page size support - NDK configuration
+        ndk {
+            abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
+        }
+
+        // 16KB page size support - Native build arguments
         externalNativeBuild {
             cmake {
                 arguments "-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON"
+                cppFlags "-Wl,-z,max-page-size=16384"
             }
         }
     }
@@ -88,8 +94,16 @@ android{
 
     packagingOptions {
         jniLibs {
-            // Required for 16KB page size support with AGP 8.5 or lower
-            useLegacyPackaging = true
+            // Enable uncompressed native libraries for 16KB page size support
+            useLegacyPackaging = false
+        }
+    }
+
+    // 16KB page size support - Link to CMakeLists.txt
+    externalNativeBuild {
+        cmake {
+            path "../CMakeLists.txt"
+            version "3.22.1"
         }
     }
 }
